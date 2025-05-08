@@ -1,16 +1,30 @@
-require 'bundler/setup'
-require 'html/pipeline'
-require 'minitest/autorun'
+# frozen_string_literal: true
 
-require 'active_support/core_ext/string'
+require "bundler/setup"
+require "html_pipeline"
+
+require "minitest/autorun"
+require "minitest/pride"
+require "minitest/focus"
+
+require "awesome_print"
+
+require "nokogiri"
 
 module TestHelpers
-  # Asserts that two html fragments are equivalent. Attribute order
-  # will be ignored.
-  def assert_equal_html(expected, actual)
-    assert_equal Nokogiri::HTML::DocumentFragment.parse(expected).to_hash,
-                 Nokogiri::HTML::DocumentFragment.parse(actual).to_hash
+end
+
+Minitest::Test.include(TestHelpers)
+
+class TestReverseFilter < HTMLPipeline::TextFilter
+  def call(input, context: {}, result: {})
+    input.reverse
   end
 end
 
-Minitest::Test.send(:include, TestHelpers)
+# bolds any instance of the word yeH
+class YehBolderFilter < HTMLPipeline::TextFilter
+  def call(input, context: {}, result: {})
+    input.gsub("yeH", "**yeH**") unless context[:bolded] == false
+  end
+end

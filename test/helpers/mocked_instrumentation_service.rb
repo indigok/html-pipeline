@@ -1,8 +1,11 @@
+# frozen_string_literal: true
+
 class MockedInstrumentationService
   attr_reader :events
+
   def initialize(event = nil, events = [])
     @events = events
-    subscribe event
+    subscribe(event)
   end
 
   def instrument(event, payload = nil)
