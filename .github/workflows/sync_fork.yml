@@ -24,9 +24,16 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Merge Upstream `main` 
+      - name: Create and Push Branch 
         run: |          
+          git checkout weekly-sync-branch
           git merge upstream/main --no-commit
           git reset -- ./.github
           git commit -m "Merge in upstream/main"
+          git commit --allow-empty -m "Empty commit to open PR"
           git push
+
+      - name: Open PR 
+        run: |  
+          gh repo set-default indigok/html-pipeline
+          gh pr create -B main -H weekly-sync-branch --title 'Sync Fork with Upstream' --body 'Weekly Cron. Created by GitHub Actions.
